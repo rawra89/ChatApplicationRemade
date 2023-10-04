@@ -28,45 +28,58 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			button1 = new Button();
-			button2 = new Button();
+			button_Create = new Button();
+			button_Join = new Button();
+			textBox_Greeting = new Label();
 			SuspendLayout();
 			// 
-			// button1
+			// button_Create
 			// 
-			button1.Location = new Point(133, 161);
-			button1.Name = "button1";
-			button1.Size = new Size(75, 23);
-			button1.TabIndex = 0;
-			button1.Text = "button1";
-			button1.UseVisualStyleBackColor = true;
-			button1.Click += button1_Click;
+			button_Create.Location = new Point(133, 104);
+			button_Create.Name = "button_Create";
+			button_Create.Size = new Size(75, 23);
+			button_Create.TabIndex = 0;
+			button_Create.Text = "Create";
+			button_Create.UseVisualStyleBackColor = true;
+			button_Create.Click += button_Create_Click;
 			// 
-			// button2
+			// button_Join
 			// 
-			button2.Location = new Point(214, 161);
-			button2.Name = "button2";
-			button2.Size = new Size(75, 23);
-			button2.TabIndex = 1;
-			button2.Text = "button2";
-			button2.UseVisualStyleBackColor = true;
-			button2.Click += button2_Click;
+			button_Join.Location = new Point(214, 104);
+			button_Join.Name = "button_Join";
+			button_Join.Size = new Size(75, 23);
+			button_Join.TabIndex = 1;
+			button_Join.Text = "Join";
+			button_Join.UseVisualStyleBackColor = true;
+			button_Join.Click += button_Join_Click;
+			// 
+			// textBox_Greeting
+			// 
+			textBox_Greeting.AutoSize = true;
+			textBox_Greeting.Location = new Point(170, 72);
+			textBox_Greeting.Name = "textBox_Greeting";
+			textBox_Greeting.Size = new Size(0, 15);
+			textBox_Greeting.TabIndex = 2;
 			// 
 			// MainMenu
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(423, 230);
-			Controls.Add(button2);
-			Controls.Add(button1);
+			Controls.Add(textBox_Greeting);
+			Controls.Add(button_Join);
+			Controls.Add(button_Create);
 			Name = "MainMenu";
 			Text = "Form1";
+			Load += MainMenu_Load;
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
 
-		private Button button1;
-		private Button button2;
+		private Button button_Create;
+		private Button button_Join;
+		private Label textBox_Greeting;
 	}
 }

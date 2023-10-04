@@ -28,22 +28,45 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			textBox1 = new TextBox();
+			textBox_IPAddress = new TextBox();
+			button_Join = new Button();
+			label_IP = new Label();
 			SuspendLayout();
 			// 
-			// textBox1
+			// textBox_IPAddress
 			// 
-			textBox1.Location = new Point(100, 122);
-			textBox1.Name = "textBox1";
-			textBox1.Size = new Size(100, 23);
-			textBox1.TabIndex = 0;
+			textBox_IPAddress.Location = new Point(59, 93);
+			textBox_IPAddress.Name = "textBox_IPAddress";
+			textBox_IPAddress.Size = new Size(180, 23);
+			textBox_IPAddress.TabIndex = 0;
+			// 
+			// button_Join
+			// 
+			button_Join.Location = new Point(111, 122);
+			button_Join.Name = "button_Join";
+			button_Join.Size = new Size(75, 23);
+			button_Join.TabIndex = 1;
+			button_Join.Text = "Join";
+			button_Join.UseVisualStyleBackColor = true;
+			button_Join.Click += button_Join_Click;
+			// 
+			// label_IP
+			// 
+			label_IP.AutoSize = true;
+			label_IP.Location = new Point(139, 75);
+			label_IP.Name = "label_IP";
+			label_IP.Size = new Size(20, 15);
+			label_IP.TabIndex = 2;
+			label_IP.Text = "IP:";
 			// 
 			// JoinMenu
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(298, 211);
-			Controls.Add(textBox1);
+			Controls.Add(label_IP);
+			Controls.Add(button_Join);
+			Controls.Add(textBox_IPAddress);
 			Name = "JoinMenu";
 			Text = "Join";
 			ResumeLayout(false);
@@ -52,6 +75,8 @@
 
 		#endregion
 
-		private TextBox textBox1;
+		private TextBox textBox_IPAddress;
+		private Button button_Join;
+		private Label label_IP;
 	}
 }

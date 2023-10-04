@@ -14,14 +14,14 @@ public partial class MainMenu : Form
 		// 
 	}
 
-	private void button1_Click(object sender, EventArgs e)
+	private void button_Create_Click(object sender, EventArgs e)
 	{
 		// Create a room, start a form up for it
 		var CreateRoomForm = new CreateForm();
 		CreateRoomForm.ShowDialog();
 	}
 
-	private void button2_Click(object sender, EventArgs e)
+	private void button_Join_Click(object sender, EventArgs e)
 	{
 		// Join a room, get a join room form up.
 		var JoinRoomForm = new JoinMenu();
