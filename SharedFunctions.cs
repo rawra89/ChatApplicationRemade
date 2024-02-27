@@ -10,8 +10,8 @@ using System.Security.Cryptography;
 namespace SharedFunctions;
 public class User
 {
-	public string name { get; }
-	public string nickname { get; set; }
+	public string Name { get; }
+	public string Nickname { get; set; }
 	public string ID { get; }
 	public DateTime timeJoined { get; }
 
@@ -41,24 +41,23 @@ public class ServerInfo
 
 // Keep track of who is sending what.
 // Name, ID, then message.
-[Serializable]
 public class MessageState
 {
-	public string name;
-	public string ID;
-	public string message;
+	public string owner;	// Who made this message?
+	public string ID;		// What ID is it from? Send as string, will be parsed as uint64 later
+	public string message;	// Message.
 	public DateTime timeSent; // This should be modified by the server when sent.
 
 	public MessageState()
 	{
-		name = "";
+        owner = "";
 		ID = "";
 		message = "";
 	}
 
-	public MessageState(string _name, string _ID, string _message )
+	public MessageState( string _owner, string _ID, string _message )
 	{
-		name = _name + Shared.BREAKMSG;
+		owner = _owner + Shared.BREAKMSG;
 		ID = _ID + Shared.BREAKMSG;
 		message = _message + Shared.ENDMSG;
 	}
@@ -67,108 +66,103 @@ public class MessageState
 	public MessageState( string msg )
 	{
 		string temp = "";
+		UInt64 tmpID = 0;
+
 		int i = 0;
 		for ( i = 0; i < msg.Length; i++ )
 		{
 			temp += msg[i];
 			if ( temp.Contains( Shared.BREAKMSG ) )
 			{
-				name = temp + Shared.BREAKMSG;
+				owner = temp;
 			}
 		}
-		temp = "";
+
 		int j = 0;
 		for ( j = i; j < msg.Length; j++ )
 		{
 			temp += msg[j];
 			if ( temp.Contains( Shared.BREAKMSG ) )
 			{
-				ID = temp + Shared.BREAKMSG;
+				ID = temp;
 			}
 		}
 
 		temp = "";
-		for ( int k = j; k < msg.Length; k++ )
+		int k = 0;
+		for ( k = j; k < msg.Length; k++ )
 		{
 			temp += msg[k];
 			if ( temp.Contains( Shared.ENDMSG ) ) 
 			{
-				message = temp + Shared.ENDMSG;
+				message = temp;
 			}
 		}
 	}
 
 	public override string ToString()
 	{
-		return name + ID + message;
+		return owner + ID + message;
 	}
 }
 
+
+// General functions used by both client and server.
 public static class Shared
 {		
-	public const string BREAKMSG = "|<BREAKMSG>|";
-	public const string ENDMSG = "|<ENDMSG>|";
-	public const string USERINFOMSG = "|<USERINFOMSG>|";
-	public const string ACKMSG = "|<ACKMSG>|";
+	public const string BREAKMSG = "|<BREAKMSG>|"; // Put this at the end of a message "segment", for parsing reasons.
+	public const string ENDMSG = "|<ENDMSG>|"; // Put at the end of the message.
+	public const string USERINFOMSG = "|<USERINFOMSG>|"; // Put at the beginning of the message.
+	public const string ACKMSG = "|<ACKMSG>|"; // Generic ack message.
 
 	// General functions used by both
-	public static int SendMessage( ref Socket socket, MessageState msg, int buffersize )
+	public static async Task<int> SendMessage( Socket socket, MessageState msg, int buffersize, byte[]? AESKey = null )
 	{
+		// Not connected, get out.
 		if ( socket == null || !socket.Connected )
-			return -1;
+			throw new SocketException();
 
+		// Make a buffer to receive data.
 		byte[] bytes = new byte[buffersize];
 
 		bytes = Encoding.UTF8.GetBytes( msg.ToString() );
 
-		return socket.Send( bytes );
+		// Encrypt if an AES key was provided.
+		//if ( AESKey != null )
+		//{
+  //          var aes = Aes.Create();
+  //          aes.KeySize = 256;
+  //          aes.BlockSize = 128;
+  //          aes.Padding = PaddingMode.Zeros;
+  //          aes.GenerateIV();
+		//	aes.Key = AESKey;
+
+  //          aes.EncryptCbc( bytes, aes.IV );
+  //      }
+
+		return await socket.SendAsync( bytes );
 	}
 
-	public static MessageState? ReceiveMessage( ref Socket socket, int buffersize )
+	public static async Task<MessageState?> ReceiveMessage( Socket socket, int buffersize )
 	{
-		// Receive the MessageState as a whole string
+		// Not connected, get out
 		if ( socket == null || !socket.Connected )
-			return null;
+            throw new SocketException();
 
-		byte[] buf = new byte[ buffersize ];
+        // Receive the MessageState as a whole string
+        byte[] buf = new byte[ buffersize ];
 		string msg = "";
 
-		while ( socket.Receive( buf ) > 0 )
+		await socket.ReceiveAsync(buf);
+
+		while ( true )
 		{
 			msg += Encoding.UTF8.GetString( buf );
+
+			if ( msg.Contains( ENDMSG ) )
+				break;
 		}
 
 		return new MessageState( msg );
-	}
-
-	public static int SendEncryptedMessage( ref Socket socket, MessageState msg, int buffersize )
-	{
-		if ( socket == null || !socket.Connected )
-			return -1;
-
-		byte[] bytes = new byte[ buffersize ];
-
-		bytes = Encoding.UTF8.GetBytes( msg.ToString() );
-
-		var aes = Aes.Create();
-
-		aes.KeySize = 256;
-		aes.BlockSize = buffersize;
-		aes.Padding = PaddingMode.Zeros;
-
-		aes.GenerateKey();
-
-
-
-
-		return socket.Send( bytes );
-	}
-
-	public static string ReceiveEncryptedMessage( ref Socket socket, MessageState msg, int buffersize )
-	{
-		if ( socket == null || !socket.Connected )
-			return "";
-
-		return "";
 	}
 }

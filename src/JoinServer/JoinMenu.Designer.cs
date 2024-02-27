@@ -28,49 +28,55 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			textBox_IPAddress = new TextBox();
-			button_Join = new Button();
-			label_IP = new Label();
-			SuspendLayout();
-			// 
-			// textBox_IPAddress
-			// 
-			textBox_IPAddress.Location = new Point(59, 93);
-			textBox_IPAddress.Name = "textBox_IPAddress";
-			textBox_IPAddress.Size = new Size(180, 23);
-			textBox_IPAddress.TabIndex = 0;
-			// 
-			// button_Join
-			// 
-			button_Join.Location = new Point(111, 122);
-			button_Join.Name = "button_Join";
-			button_Join.Size = new Size(75, 23);
-			button_Join.TabIndex = 1;
-			button_Join.Text = "Join";
-			button_Join.UseVisualStyleBackColor = true;
-			button_Join.Click += button_Join_Click;
-			// 
-			// label_IP
-			// 
-			label_IP.AutoSize = true;
-			label_IP.Location = new Point(139, 75);
-			label_IP.Name = "label_IP";
-			label_IP.Size = new Size(20, 15);
-			label_IP.TabIndex = 2;
-			label_IP.Text = "IP:";
-			// 
-			// JoinMenu
-			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
-			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(298, 211);
-			Controls.Add(label_IP);
-			Controls.Add(button_Join);
-			Controls.Add(textBox_IPAddress);
-			Name = "JoinMenu";
-			Text = "Join";
-			ResumeLayout(false);
-			PerformLayout();
+            this.textBox_IPAddress = new System.Windows.Forms.TextBox();
+            this.button_Join = new System.Windows.Forms.Button();
+            this.label_IP = new System.Windows.Forms.Label();
+            this.BGW_ChatroomJoiner = new System.ComponentModel.BackgroundWorker();
+            this.SuspendLayout();
+            // 
+            // textBox_IPAddress
+            // 
+            this.textBox_IPAddress.Location = new System.Drawing.Point(59, 93);
+            this.textBox_IPAddress.Name = "textBox_IPAddress";
+            this.textBox_IPAddress.Size = new System.Drawing.Size(180, 23);
+            this.textBox_IPAddress.TabIndex = 0;
+            // 
+            // button_Join
+            // 
+            this.button_Join.Location = new System.Drawing.Point(111, 122);
+            this.button_Join.Name = "button_Join";
+            this.button_Join.Size = new System.Drawing.Size(75, 23);
+            this.button_Join.TabIndex = 1;
+            this.button_Join.Text = "Join";
+            this.button_Join.UseVisualStyleBackColor = true;
+            this.button_Join.Click += new System.EventHandler(this.button_Join_Click_1);
+            // 
+            // label_IP
+            // 
+            this.label_IP.AutoSize = true;
+            this.label_IP.Location = new System.Drawing.Point(139, 75);
+            this.label_IP.Name = "label_IP";
+            this.label_IP.Size = new System.Drawing.Size(20, 15);
+            this.label_IP.TabIndex = 2;
+            this.label_IP.Text = "IP:";
+            // 
+            // BGW_ChatroomJoiner
+            // 
+            this.BGW_ChatroomJoiner.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BGW_ChatroomJoiner_DoWork);
+            // 
+            // JoinMenu
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(298, 211);
+            this.Controls.Add(this.label_IP);
+            this.Controls.Add(this.button_Join);
+            this.Controls.Add(this.textBox_IPAddress);
+            this.Name = "JoinMenu";
+            this.Text = "Join";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
 		}
 
 		#endregion
@@ -78,5 +84,6 @@
 		private TextBox textBox_IPAddress;
 		private Button button_Join;
 		private Label label_IP;
-	}
+        private System.ComponentModel.BackgroundWorker BGW_ChatroomJoiner;
+    }
 }

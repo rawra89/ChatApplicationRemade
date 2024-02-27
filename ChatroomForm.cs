@@ -9,7 +9,7 @@ namespace ChatApplicationRemade;
 public partial class ChatroomForm : Form
 {
 	readonly Socket socket;
-	readonly ServerInfo? serverInfo;
+	readonly ServerInfo? serverInfo; // Nullable because maybe the room may not be available if this opens
 
 	public ChatroomForm( ref Socket _clientSocket, ref ServerInfo? _serverInfo )
 	{
@@ -17,6 +17,4 @@ public partial class ChatroomForm : Form
 		socket = _clientSocket;
 		serverInfo = _serverInfo;
 	}
-
-	
 }

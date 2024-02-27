@@ -17,30 +17,30 @@ using ClientSocket = Socket;
 public partial class JoinMenu : Form
 {
 	ClientSocket clientSocket;
-
+	IPAddress ipaddr;
 	public JoinMenu()
 	{
 		InitializeComponent();
 	}
 
-	private void button_Join_Click( object sender, EventArgs e )
-	{
-		if ( String.IsNullOrEmpty( textBox_IPAddress.Text ) )
-		{
-			MessageBox.Show( "Please enter an IP Address!", "Error", MessageBoxButtons.OK );
-			return;
-		}
+    private void button_Join_Click_1( object sender, EventArgs e )
+    {
+        if ( String.IsNullOrEmpty( textBox_IPAddress.Text ) )
+        {
+            MessageBox.Show( "Please enter an IP Address!", "Error", MessageBoxButtons.OK );
+            return;
+        }
 
-		IPAddress? IPAddr = null;
-		if ( !IPAddress.TryParse( textBox_IPAddress.Text, out IPAddr ) )
-		{
-			MessageBox.Show( "Please enter a valid IP Address!", "Error", MessageBoxButtons.OK );
-			return;
-		}
+		ipaddr = IPAddress.Parse("127.0.0.1");
 
-		Thread th = new Thread( () => { AttemptToJoinChatroom( IPAddr ); } );
-		th.Start();
-	}
+        if ( !IPAddress.TryParse( textBox_IPAddress.Text, out ipaddr ) )
+        {
+            MessageBox.Show( "Please enter a valid IP Address!", "Error", MessageBoxButtons.OK );
+            return;
+        }
+
+		BGW_ChatroomJoiner.RunWorkerAsync();
+    }
 
 	private void AttemptToJoinChatroom( IPAddress ipaddr )
 	{
@@ -54,7 +54,7 @@ public partial class JoinMenu : Form
 
 		catch
 		{
-			MessageBox.Show( "Failed to find chatroom.", "Error", MessageBoxButtons.OK );
+			MessageBox.Show( "Failed to find the chatroom.", "Error", MessageBoxButtons.OK );
 			clientSocket.Close();
 			return;
 		}
@@ -62,18 +62,18 @@ public partial class JoinMenu : Form
 		JoinSuccess();
 	}
 
-	private bool SendUserInfo()
+	private async Task<bool> SendUserInfo()
 	{
 		try
 		{
 			// Send name and ID...
-			Shared.SendMessage( ref clientSocket, new MessageState( "name", "190308", Shared.USERINFOMSG ), 512 );
+			await Shared.SendMessage( clientSocket, new MessageState( "name", "190308", Shared.USERINFOMSG ), 512 );
 
 			return WaitForServerACKMessage();
 		}
 		catch ( SocketException e ) 
 		{
-			MessageBox.Show( e.Message, "Error", MessageBoxButtons.OK );
+			MessageBox.Show( e.Message, "Unable to send user information to the server!", MessageBoxButtons.OK );
 		}
 
 		return false;
@@ -84,23 +84,20 @@ public partial class JoinMenu : Form
 		if ( !clientSocket.Connected || clientSocket == null )
 			return false;
 
-		byte[] buf = new byte[64];
+		byte[] buf = new byte[16];
 		clientSocket.Receive( buf );
 
 		return Encoding.UTF8.GetString( buf ).Equals( Shared.ACKMSG );
 	}
 
-	private ServerInfo? ReceiveServerInfo()
+	private  ServerInfo? ReceiveServerInfo()
 	{
-		MessageState? msg = Shared.ReceiveMessage( ref clientSocket, 1024 );
+		Task<MessageState?> msg = Shared.ReceiveMessage( clientSocket, 1024 );
 
 		if ( msg == null )
 			return null;
 
 		// Receive in the order of the ServerInfo class
-
-		
-
 
 
 		return null;
@@ -127,4 +124,10 @@ public partial class JoinMenu : Form
 		ChatroomForm chatroom = new ChatroomForm( ref clientSocket, ref svInf );
 		chatroom.ShowDialog();
 	}
+
+	private void BGW_ChatroomJoiner_DoWork( object sender, DoWorkEventArgs e )
+	{
+        // Connecting Window pops up...
+        AttemptToJoinChatroom( ipaddr );
+    }
 }
